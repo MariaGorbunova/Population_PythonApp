@@ -16,6 +16,8 @@ DEBUG = True
 class Countries:
 
     def __init__(self):
+        self.largest_indices = []
+        self.median = []
         self.years = np.genfromtxt(YEARS_FILE, dtype=int, delimiter=',')
         if DEBUG:
             print(self.years)
@@ -23,6 +25,7 @@ class Countries:
         with open(COUNTRIES_FILE) as f:
             csv_reader = csv.reader(f, delimiter=',')
             self.countries = np.array([row for row in csv_reader])
+
             if DEBUG:
                 print(self.countries)
 
@@ -33,10 +36,10 @@ class Countries:
         self.some_stats()
 
     def find_largest(self):
-        ind = np.argsort(self.population[:, -1])
-        largest_indices = ind[::-1][:10]
+        self.largest_indices = self.population[:, -1].argsort()[::-1][:10]
+        self.largest_indices = self.largest_indices[::-1] #reversing the order
         if DEBUG:
-            for i in largest_indices:
+            for i in self.largest_indices:
                 print(f"{self.countries[i]} population: {self.population[i, -1]:,}")
 
     def some_stats(self):
@@ -47,23 +50,16 @@ class Countries:
             print(self.median)
 
 
-            '''
-    The plot method accepts a list of indices, each index is the index of a
-    country in the list of countries.
-    From the list of indices, find each corresponding country and plot the 
-    population of that country for all the years.
-    Also plot the median population of all the countries in the world, 
-    for all the years. This helps the user visually compare the population 
-    of their chosen countries and the median of all countries.
-    The plot must have: a title, a legend that shows the country names, 
-    the x-ticks should be the years,  a y-axis label, which is the population in millions.  
-            '''
     def plot_trendCountries(self,idxs):
-        print("plot trend")
+        if DEBUG:
+            print("plot trend")
         plt.plot(self.years, self.median, "--r", label="Median")
         for i in idxs:
-            plt.plot(self.years, self.population[i], label = self.countries[i])
+            plt.plot(self.years, self.population[i], label=self.countries[i][0])
         plt.legend(loc="best")
+        plt.title("Population for selected countries")
+        plt.ylabel("population, mln")
+        plt.xticks(self.years, rotation=90)
         plt.show()
 
 
@@ -71,9 +67,23 @@ class Countries:
     def plot_regionTrend(self):
         print("Plotting region trend")
 
+        return "Names of regions"
+
+
 
     def plot_growth(self):
         print("plot growth for top 10")
+
+        country_name = [self.countries[i, 0] for i in self.largest_indices]
+        country_pop = [self.population[i, -1] for i in self.largest_indices]
+
+        plt.bar(country_name, country_pop, edgecolor='blue')
+        plt.title("Top 10 in 2019")
+        plt.ylabel("population, mln")
+        plt.xticks(country_name, rotation=90)
+
+        plt.show()
+        return country_name
 
 
 
@@ -81,6 +91,7 @@ class Countries:
 
 c = Countries()
 c.find_largest()
-c.plot_trendCountries([6,14,100,66,34])
+#c.plot_trendCountries([6,14,100,66,34])
+c.plot_growth()
 
 
