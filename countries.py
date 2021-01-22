@@ -1,11 +1,7 @@
 import csv
 import numpy as np
-import tkinter as tk
 import matplotlib.pyplot as plt
-
-
 from collections import defaultdict
-
 POPULATION_FILE = 'population.csv'
 YEARS_FILE = 'years.csv'
 COUNTRIES_FILE = 'countries.csv'
@@ -14,10 +10,10 @@ DEBUG = True
 
 
 class Countries:
-
     def __init__(self):
         self.largest_indices = []
         self.median = []
+
         self.years = np.genfromtxt(YEARS_FILE, dtype=int, delimiter=',')
         if DEBUG:
             print(self.years)
@@ -25,7 +21,6 @@ class Countries:
         with open(COUNTRIES_FILE) as f:
             csv_reader = csv.reader(f, delimiter=',')
             self.countries = np.array([row for row in csv_reader])
-
             if DEBUG:
                 print(self.countries)
 
@@ -65,14 +60,54 @@ class Countries:
 
 
     def plot_regionTrend(self):
-        print("Plotting region trend")
+        if DEBUG:
+            print("Plotting region trend")
 
+        total_years = []
+
+        for i, year in enumerate(self.years):
+
+            if DEBUG:
+                print("*" * 20)
+                print(year)
+                print("*"*20)
+
+            region_dict = {}
+            for j, country in enumerate(self.countries):
+
+                region_dict[country[2]] = region_dict.get(country[2], 0) + self.population[j, i]
+
+                if DEBUG:
+                    print(country[2], self.population[j, i])
+                    print(region_dict[country[2]])
+
+            total_years.append(region_dict)
+
+        print(total_years[0])
+
+
+        for year in total_years:
+
+            print(year)
+
+
+
+        '''
+        for i in regions:
+            plt.plot(self.years, total_for_region, label=i)
+        plt.legend(loc="best")
+        plt.title("Total population for each region")
+        plt.ylabel("population, mln")
+        plt.xticks(self.years, rotation=90)
+        plt.show()
+        '''
         return "Names of regions"
 
 
 
     def plot_growth(self):
-        print("plot growth for top 10")
+        if DEBUG:
+            print("plot growth for top 10")
 
         country_name = [self.countries[i, 0] for i in self.largest_indices]
         country_pop = [self.population[i, -1] for i in self.largest_indices]
@@ -92,6 +127,6 @@ class Countries:
 c = Countries()
 c.find_largest()
 #c.plot_trendCountries([6,14,100,66,34])
-c.plot_growth()
+#c.plot_growth()
 
-
+c.plot_regionTrend()
