@@ -6,13 +6,20 @@ POPULATION_FILE = 'population.csv'
 YEARS_FILE = 'years.csv'
 COUNTRIES_FILE = 'countries.csv'
 
-DEBUG = True
+DEBUG = False
+
+def print_return(foo):
+    def wrapper(*args, **kwargs):
+        result = foo(*args, **kwargs)
+        for item in result:
+            print(item)
+        #return result
+    return wrapper
+
 
 
 class Countries:
     def __init__(self):
-        self.largest_indices = []
-        self.median = []
 
         self.years = np.genfromtxt(YEARS_FILE, dtype=int, delimiter=',')
         if DEBUG:
@@ -28,21 +35,23 @@ class Countries:
         if DEBUG:
             print(self.population.shape)
 
-        self.some_stats()
+        self.largest_indices = self.find_largest()
+        self.median = self.some_stats()
 
     def find_largest(self):
-        self.largest_indices = self.population[:, -1].argsort()[::-1][:10]
-        self.largest_indices = self.largest_indices[::-1] #reversing the order
+        larg_idx = self.population[:, -1].argsort()[::-1][:10]
+        larg_idx = larg_idx[::-1] #reversing the order
         if DEBUG:
             for i in self.largest_indices:
                 print(f"{self.countries[i]} population: {self.population[i, -1]:,}")
+        return larg_idx
 
     def some_stats(self):
+        median = np.median(self.population, axis=0)
         if DEBUG:
-            print("calculating.. median")
-        self.median = np.median(self.population, axis=0)
-        if DEBUG:
-            print(self.median)
+            print("Calculating median")
+            print(median)
+        return median
 
 
     def plot_trendCountries(self,idxs):
@@ -57,8 +66,7 @@ class Countries:
         plt.xticks(self.years, rotation=90)
         plt.show()
 
-
-
+    @print_return
     def plot_regionTrend(self):
         if DEBUG:
             print("Plotting region trend")
@@ -71,25 +79,24 @@ class Countries:
                     print(country[0], country[2], region_dict.get(country[2], np.zeros(60)))
             region_dict[country[2]] = region_dict.get(country[2], 0) + self.population[i]
 
+
         if DEBUG:
             for region in region_dict:
                 print(region)
                 print(region_dict[region])
                 print(region_dict[region].dtype)
 
-        '''
-        for i in regions:
-            plt.plot(self.years, total_for_region, label=i)
-        plt.legend(loc="best")
+        for region in region_dict:
+            plt.plot(self.years, region_dict[region], label=region)
+
         plt.title("Total population for each region")
+        plt.legend(loc="best")
         plt.ylabel("population, mln")
         plt.xticks(self.years, rotation=90)
         plt.show()
-        '''
-        return "Names of regions"
+        return [region for region in region_dict]
 
-
-
+    @print_return
     def plot_growth(self):
         if DEBUG:
             print("plot growth for top 10")
@@ -110,8 +117,6 @@ class Countries:
 
 
 c = Countries()
-c.find_largest()
-#c.plot_trendCountries([6,14,100,66,34])
-#c.plot_growth()
-
+c.plot_trendCountries([6,14,100,66,34])
+c.plot_growth()
 c.plot_regionTrend()
