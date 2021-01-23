@@ -63,34 +63,19 @@ class Countries:
         if DEBUG:
             print("Plotting region trend")
 
-        total_years = []
-
-        for i, year in enumerate(self.years):
-
+        region_dict = defaultdict(lambda: np.ndarray(0))
+        for i, country in enumerate(self.countries):
             if DEBUG:
-                print("*" * 20)
-                print(year)
-                print("*"*20)
+                if i in range(10):
+                    print(country[0], self.population[i])
+                    print(country[0], country[2], region_dict.get(country[2], np.zeros(60)))
+            region_dict[country[2]] = region_dict.get(country[2], 0) + self.population[i]
 
-            region_dict = {}
-            for j, country in enumerate(self.countries):
-
-                region_dict[country[2]] = region_dict.get(country[2], 0) + self.population[j, i]
-
-                if DEBUG:
-                    print(country[2], self.population[j, i])
-                    print(region_dict[country[2]])
-
-            total_years.append(region_dict)
-
-        print(total_years[0])
-
-
-        for year in total_years:
-
-            print(year)
-
-
+        if DEBUG:
+            for region in region_dict:
+                print(region)
+                print(region_dict[region])
+                print(region_dict[region].dtype)
 
         '''
         for i in regions:
