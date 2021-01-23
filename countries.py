@@ -2,20 +2,22 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
+
 POPULATION_FILE = 'population.csv'
 YEARS_FILE = 'years.csv'
 COUNTRIES_FILE = 'countries.csv'
 
 DEBUG = False
 
+
 def print_return(foo):
     def wrapper(*args, **kwargs):
         result = foo(*args, **kwargs)
         for item in result:
             print(item)
-        #return result
-    return wrapper
+        # return result
 
+    return wrapper
 
 
 class Countries:
@@ -40,7 +42,7 @@ class Countries:
 
     def find_largest(self):
         larg_idx = self.population[:, -1].argsort()[::-1][:10]
-        larg_idx = larg_idx[::-1] #reversing the order
+        larg_idx = larg_idx[::-1]  # reversing the order
         if DEBUG:
             for i in self.largest_indices:
                 print(f"{self.countries[i]} population: {self.population[i, -1]:,}")
@@ -53,8 +55,7 @@ class Countries:
             print(median)
         return median
 
-
-    def plot_trendCountries(self,idxs):
+    def plot_trendCountries(self, idxs):
         if DEBUG:
             print("plot trend")
         plt.plot(self.years, self.median, "--r", label="Median")
@@ -78,7 +79,6 @@ class Countries:
                     print(country[0], self.population[i])
                     print(country[0], country[2], region_dict.get(country[2], np.zeros(60)))
             region_dict[country[2]] = region_dict.get(country[2], 0) + self.population[i]
-
 
         if DEBUG:
             for region in region_dict:
@@ -113,10 +113,9 @@ class Countries:
         return country_name
 
 
-
-
-
+'''
 c = Countries()
 c.plot_trendCountries([6,14,100,66,34])
 c.plot_growth()
 c.plot_regionTrend()
+'''
