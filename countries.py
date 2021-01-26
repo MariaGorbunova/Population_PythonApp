@@ -74,8 +74,8 @@ class Countries:
     def plot_regionTrend(self):
         if DEBUG:
             print("Plotting region trend")
-        sr = sorted(set(self.data[:, 1]))
-        for region in sr:
+        sorted_regions = sorted(set(self.data[:, 1]))
+        for region in sorted_regions:
             region_arr = np.sum(self.population[self.data[:, 1] == region], 0)
             plt.plot(self.years, region_arr, label=region)
 
@@ -84,7 +84,7 @@ class Countries:
         plt.ylabel("population, mln")
         plt.xticks(self.years, rotation=90)
         plt.show()
-        return sr
+        return sorted_regions
 
     @print_return
     def plot_growth(self):
@@ -102,8 +102,9 @@ class Countries:
         plt.show()
         return country_name
 
-
+'''
 c = Countries()
 c.plot_trendCountries([6, 14, 100, 66, 34])
 c.plot_growth()
-c.plot_regionTrend()
+c.plot_regionTrend()'''
+
