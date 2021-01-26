@@ -1,3 +1,6 @@
+#Maria Gorbunova
+#Assignment 2
+
 import tkinter as tk
 
 
@@ -44,11 +47,13 @@ class Win3:
 
     def close_window(self):
         self.master.destroy()
-
+'''
 
 root = tk.Tk()
 app = Win1(root)
 root.mainloop()
+
+'''
 
 '''
 class MainWin(tk.Toplevel):  # inherit from tkinter Toplevel class
