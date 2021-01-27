@@ -13,7 +13,7 @@ from countries import Countries
 class MainWin:
     def __init__(self, master):
         self.master = master
-        self.data = self.getData()
+        self.data = Countries()
         self.master.geometry("400x100")
         self.master.title("Population")
 
@@ -28,9 +28,6 @@ class MainWin:
     def butnew(self, text, number, _class):
         tk.Button(self.frame, text=text, command=lambda: self.new_window(number, _class)).grid(row=1,
                                                                                                column=int(number))
-
-    def getData(self):
-        return Countries()
 
     '''class UI:
         def __init__(self, fname =None):
@@ -77,16 +74,17 @@ class Win3:
     def __init__(self, master, number, data):
         self.data = data
         self.master = master
-        self.master.geometry("400x400+200+200")
-        self.S = tk.Scrollbar(master)
-        self.LB = tk.Listbox(master, height=600, width=600, selectmode="multiple", yscrollcommand=self.S.set)
-        self.S.config(command=self.LB.yview)
-        self.LB.insert(tk.END, *self.data.get_countries())
-        idx = self.LB.curselection()
-        self.LB.pack()
-        self.S.pack()
+        self.master.geometry("400x400")
 
+        self.scrollbar = tk.Scrollbar(self.master)
+        self.scrollbar.pack(side='right', fill='y')
+        self.listbox = tk.Listbox(self.master, height=300, width=400, selectmode="multiple")
+        self.listbox.insert(tk.END, *self.data.get_countries())
+        self.listbox.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.listbox.yview)
+        self.listbox.pack()
 
+        idx = self.listbox.curselection()
 
     def close_window(self):
         self.master.destroy()

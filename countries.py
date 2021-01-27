@@ -43,7 +43,7 @@ class Countries:
         self.median = self.some_stats()
 
     def get_countries(self):
-        return self.countries
+        return self.data[:, 0]
 
 
     def find_largest(self):
