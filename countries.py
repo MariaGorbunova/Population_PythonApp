@@ -42,6 +42,10 @@ class Countries:
         self.largest_indices = self.find_largest()
         self.median = self.some_stats()
 
+    def get_countries(self):
+        return self.countries
+
+
     def find_largest(self):
         large_idx = self.population[:, -1].argsort()[::-1][:10]
         large_idx = large_idx[::-1]  # reversing the order
@@ -83,7 +87,7 @@ class Countries:
         plt.legend(loc="best")
         plt.ylabel("population, mln")
         plt.xticks(self.years, rotation=90)
-        plt.show()
+        #plt.show()
         return sorted_regions
 
     @print_return
@@ -99,7 +103,7 @@ class Countries:
         plt.ylabel("population, mln")
         plt.xticks(country_name, rotation=45)
 
-        plt.show()
+        #plt.show()
         return country_name
 
 '''
