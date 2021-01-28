@@ -22,10 +22,11 @@ class MainWin:
         self.label.pack()
         self.butnew("By Regions", "1", PlotWin)
         self.butnew("Top Ten", "2", PlotWin)
-        self.butnew("By Countries", "3", Win3)
+        self.butnew("By Countries", "3", DialogWin)
         self.frame.pack()
 
     def butnew(self, text, number, _class):
+        '''creates a new button and sets a proper command to it'''
         tk.Button(self.frame, text=text, command=lambda: self.new_window(number, _class)).grid(row=1,
                                                                                                column=int(number))
 
@@ -43,6 +44,7 @@ class MainWin:
                 raise SystemExit("file". fname, "not found")'''
 
     def new_window(self, number, _class):
+        '''method to open a new window'''
         self.new = tk.Toplevel(self.master)
         _class(self.new, number, self.data)
 
@@ -62,23 +64,23 @@ class PlotWin:
         else:
             self.data.plot_trendCountries(number)
 
-
         canvas = FigureCanvasTkAgg(fig, master=self.master)
         canvas.get_tk_widget().grid()
         canvas.draw()
 
     def close_window(self):
+        '''closes the window'''
         self.master.destroy()
 
 
-class Win3:
+class DialogWin:
     def __init__(self,  master, number,  data):
         self.data = data
         self.master = master
         self.master.geometry("300x200")
         self.master.grab_set()
         self.master.focus_set()
-
+        self.master.title("Choose countries")
 
         self.scrollbar = tk.Scrollbar(self.master)
         self.scrollbar.pack(side='right', fill='y')
@@ -93,20 +95,23 @@ class Win3:
         self.butnew("Ok", PlotWin)
 
     def on_click_listbox(self, event):
+        '''assignes ids for countries clicked by user'''
         self.idxs = list(self.listbox.curselection())
 
     def butnew(self, text, _class):
+        '''new OK button to plot the picked values'''
         tk.Button(self.master, text=text, command=lambda: [self.new_window(_class), ]).pack()
 
     def new_window(self, _class):
+        ''' create new window'''
         self.new = tk.Toplevel(self.master)
         _class(self.new, self.idxs, self.data)
 
     def close_window(self):
+        '''closes the window'''
         self.master.destroy()
 
-
-
+#driver
 root = tk.Tk()
 app = MainWin(root)
 root.mainloop()
