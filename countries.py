@@ -1,6 +1,7 @@
 # Maria Gorbunova
 # Assignment 2
-
+'''countries has Countries class with all the backend of the program.
+It has data for population and it plots the requested graphs'''
 import numpy as np
 import matplotlib.pyplot as plt
 

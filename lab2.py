@@ -1,5 +1,7 @@
 # Maria Gorbunova
 # Assignment 2
+'''lab1 has three classes for three different windows
+with three options to plot data for world population'''
 
 import tkinter as tk
 import matplotlib
