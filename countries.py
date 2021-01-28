@@ -11,13 +11,16 @@ COUNTRIES_FILE = 'countries.csv'
 
 DEBUG = False
 
+
 def print_return(foo):
     '''decorator to print return value for some methods in countries'''
+
     def wrapper(*args, **kwargs):
         result = foo(*args, **kwargs)
         for item in result:
             print(item)
         # return result
+
     return wrapper
 
 

@@ -12,15 +12,28 @@ import matplotlib.pyplot as plt  # normal import of pyplot to plot
 from countries import Countries
 
 
-class MainWin:
-    def __init__(self, master):
-        self.master = master
-        self.data = Countries()
-        self.master.geometry("400x100")
-        self.master.title("Population")
+class MainWin(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        '''class UI:
+            def __init__(self, fname =None):
+                try:
+                    try:
+                        self.data = Countries(fname)
+                    except TypeError:
+                        self.data = Countries()
 
-        self.frame = tk.Frame(self.master)
-        self.label = tk.Label(self.master, text="Population of Countries", fg="blue")
+                    self.regions = self.data.getRegions()
+                    self.incomeRank = self.data.getIncome()
+                except IOError:
+                    raise SystemExit("file". fname, "not found")'''
+
+        self.data = Countries()
+        self.geometry("400x100")
+        self.title("Population")
+
+        self.frame = tk.Frame(self)
+        self.label = tk.Label(self, text="Population of Countries", fg="blue")
         self.label.pack()
         self.butnew("By Regions", "1", PlotWin)
         self.butnew("Top Ten", "2", PlotWin)
@@ -32,61 +45,49 @@ class MainWin:
         tk.Button(self.frame, text=text, command=lambda: self.new_window(number, _class)).grid(row=1,
                                                                                                column=int(number))
 
-    '''class UI:
-        def __init__(self, fname =None):
-            try:
-                try:
-                    self.data = Countries(fname)
-                except TypeError:
-                    self.data = Countries()
-
-                self.regions = self.data.getRegions()
-                self.incomeRank = self.data.getIncome()
-            except IOError:
-                raise SystemExit("file". fname, "not found")'''
-
-    def new_window(self, number, _class):
+    def new_window(self, idx, _class):
         '''method to open a new window'''
-        self.new = tk.Toplevel(self.master)
-        _class(self.new, number, self.data)
+        dialogWin = _class(idx, self.data)
+        self.wait_window(dialogWin)
+        if idx == "3":
+            self.new_window(dialogWin.get_idx(), PlotWin)
 
 
-class PlotWin:
-    def __init__(self, master, number, data):
-
-        self.master = master
+class PlotWin(tk.Toplevel):
+    def __init__(self, idx, data):
+        tk.Toplevel.__init__(self)
         self.data = data
         fig = plt.figure(figsize=(6, 6))
         fig.add_subplot(111)
 
-        if number == "1":
+        if idx == "1":
             self.data.plot_regionTrend()
-        elif number == "2":
+        elif idx == "2":
             self.data.plot_growth()
         else:
-            self.data.plot_trendCountries(number)
+            self.data.plot_trendCountries(idx)
 
-        canvas = FigureCanvasTkAgg(fig, master=self.master)
+        canvas = FigureCanvasTkAgg(fig, master=self)
         canvas.get_tk_widget().grid()
         canvas.draw()
 
     def close_window(self):
         '''closes the window'''
-        self.master.destroy()
+        self.destroy()
 
 
-class DialogWin:
-    def __init__(self,  master, number,  data):
+class DialogWin(tk.Toplevel):
+    def __init__(self, number, data):
+        tk.Toplevel.__init__(self)
         self.data = data
-        self.master = master
-        self.master.geometry("300x200")
-        self.master.grab_set()
-        self.master.focus_set()
-        self.master.title("Choose countries")
+        self.geometry("300x200")
+        self.grab_set()
+        self.focus_set()
+        self.title("Choose countries")
 
-        self.scrollbar = tk.Scrollbar(self.master)
+        self.scrollbar = tk.Scrollbar(self)
         self.scrollbar.pack(side='right', fill='y')
-        self.listbox = tk.Listbox(self.master, height=10, width=30, selectmode="multiple")
+        self.listbox = tk.Listbox(self, height=10, width=30, selectmode="multiple")
         self.listbox.insert(tk.END, *self.data.get_countries())
         self.listbox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.listbox.yview)
@@ -102,18 +103,16 @@ class DialogWin:
 
     def butnew(self, text, _class):
         '''new OK button to plot the picked values'''
-        tk.Button(self.master, text=text, command=lambda: [self.new_window(_class), ]).pack()
+        tk.Button(self, text=text, command=lambda: [self.close_window()]).pack()
 
-    def new_window(self, _class):
-        ''' create new window'''
-        self.new = tk.Toplevel(self.master)
-        _class(self.new, self.idxs, self.data)
+    def get_idx(self):
+        '''getter for list of picked countries'''
+        return self.idxs
 
     def close_window(self):
         '''closes the window'''
-        self.master.destroy()
+        self.destroy()
 
-#driver
-root = tk.Tk()
-app = MainWin(root)
-root.mainloop()
+
+# driver
+MainWin().mainloop()
