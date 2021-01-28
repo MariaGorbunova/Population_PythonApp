@@ -55,12 +55,13 @@ class PlotWin:
         fig = plt.figure(figsize=(6, 6))
         fig.add_subplot(111)
 
-        if int(number) == 1:
+        if number == "1":
             self.data.plot_regionTrend()
-        elif int(number) == 2:
+        elif number == "2":
             self.data.plot_growth()
         else:
             self.data.plot_trendCountries(number)
+
 
         canvas = FigureCanvasTkAgg(fig, master=self.master)
         canvas.get_tk_widget().grid()
@@ -71,23 +72,39 @@ class PlotWin:
 
 
 class Win3:
-    def __init__(self, master, number, data):
+    def __init__(self,  master, number,  data):
         self.data = data
         self.master = master
-        self.master.geometry("400x400")
+        self.master.geometry("300x200")
+        self.master.grab_set()
+        self.master.focus_set()
+
 
         self.scrollbar = tk.Scrollbar(self.master)
         self.scrollbar.pack(side='right', fill='y')
-        self.listbox = tk.Listbox(self.master, height=300, width=400, selectmode="multiple")
+        self.listbox = tk.Listbox(self.master, height=10, width=30, selectmode="multiple")
         self.listbox.insert(tk.END, *self.data.get_countries())
         self.listbox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.listbox.yview)
         self.listbox.pack()
 
-        idx = self.listbox.curselection()
+        self.idxs = []
+        self.listbox.bind('<ButtonRelease-1>', self.on_click_listbox)
+        self.butnew("Ok", PlotWin)
+
+    def on_click_listbox(self, event):
+        self.idxs = list(self.listbox.curselection())
+
+    def butnew(self, text, _class):
+        tk.Button(self.master, text=text, command=lambda: [self.new_window(_class), ]).pack()
+
+    def new_window(self, _class):
+        self.new = tk.Toplevel(self.master)
+        _class(self.new, self.idxs, self.data)
 
     def close_window(self):
         self.master.destroy()
+
 
 
 root = tk.Tk()

@@ -71,7 +71,7 @@ class Countries:
         plt.title("Population for selected countries")
         plt.ylabel("population, mln")
         plt.xticks(self.years, rotation=90)
-        plt.show()
+        #plt.show()
 
     '''This method was modified with the assistance of my classmate Ben.'''
     @print_return
