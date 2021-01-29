@@ -8,37 +8,39 @@ import matplotlib
 
 matplotlib.use('TkAgg')  # tell matplotlib to work with Tkinter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # Canvas widget
+import tkinter.messagebox as tkmb
 import matplotlib.pyplot as plt  # normal import of pyplot to plot
-from countries import Countries
+from population import Population
 
 
 class MainWin(tk.Tk):
-    def __init__(self):
+    def __init__(self, fname=None):
         super().__init__()
-        '''class UI:
-            def __init__(self, fname =None):
-                try:
-                    try:
-                        self.data = Countries(fname)
-                    except TypeError:
-                        self.data = Countries()
+        self.fname = fname
 
-                    self.regions = self.data.getRegions()
-                    self.incomeRank = self.data.getIncome()
-                except IOError:
-                    raise SystemExit("file". fname, "not found")'''
-
-        self.data = Countries()
         self.geometry("400x100")
         self.title("Population")
-
         self.frame = tk.Frame(self)
         self.label = tk.Label(self, text="Population of Countries", fg="blue")
         self.label.pack()
-        self.butnew("By Regions", "1", PlotWin)
-        self.butnew("Top Ten", "2", PlotWin)
-        self.butnew("By Countries", "3", DialogWin)
-        self.frame.pack()
+
+        try:
+            try:
+                self.data = Population(self.fname)
+            except TypeError:
+                self.data = Population()
+            self.butnew("By Regions", "1", PlotWin)
+            self.butnew("Top Ten", "2", PlotWin)
+            self.butnew("By Countries", "3", DialogWin)
+            self.frame.pack()
+        except IOError:
+            self.callback_fct()
+
+    def callback_fct(self):
+        '''open an error window for wrong file'''
+        error_str = "[Errno 1]: No such file or directory:"+self.fname
+        if tkmb.showerror("Error", error_str, parent=self):
+            self.destroy()
 
     def butnew(self, text, number, _class):
         '''creates a new button and sets a proper command to it'''
@@ -49,7 +51,7 @@ class MainWin(tk.Tk):
         '''method to open a new window'''
         dialogWin = _class(idx, self.data)
         self.wait_window(dialogWin)
-        if idx == "3":
+        if idx == "3" and len(dialogWin.get_idx()) != 0:
             self.new_window(dialogWin.get_idx(), PlotWin)
 
 
@@ -61,10 +63,13 @@ class PlotWin(tk.Toplevel):
         fig.add_subplot(111)
 
         if idx == "1":
+            self.title("Plot trends for regions")
             self.data.plot_regionTrend()
         elif idx == "2":
+            self.title("Plot top 10 countries in 2019")
             self.data.plot_growth()
         else:
+            self.title("Plot trends for selected countries")
             self.data.plot_trendCountries(idx)
 
         canvas = FigureCanvasTkAgg(fig, master=self)
@@ -98,7 +103,7 @@ class DialogWin(tk.Toplevel):
         self.butnew("Ok", PlotWin)
 
     def on_click_listbox(self, event):
-        '''assignes ids for countries clicked by user'''
+        '''assigns ids for countries clicked by user'''
         self.idxs = list(self.listbox.curselection())
 
     def butnew(self, text, _class):
@@ -116,3 +121,7 @@ class DialogWin(tk.Toplevel):
 
 # driver
 MainWin().mainloop()
+
+
+#test error window
+#MainWin("somefilename.csv").mainloop()

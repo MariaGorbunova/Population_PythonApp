@@ -24,7 +24,7 @@ def print_return(foo):
     return wrapper
 
 
-class Countries:
+class Population:
     def __init__(self, years=YEARS_FILE, countries=COUNTRIES_FILE, population=POPULATION_FILE):
         self.years = np.genfromtxt(years, delimiter=',', dtype=int)
         if DEBUG:
@@ -122,7 +122,7 @@ class Countries:
 
 '''
 #test drive
-c = Countries()
+c = Population()
 c.plot_trendCountries([6, 14, 100, 66, 34])
 c.plot_growth()
 c.plot_regionTrend()'''
