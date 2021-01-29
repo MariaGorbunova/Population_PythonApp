@@ -1,14 +1,13 @@
 # Maria Gorbunova
 # Assignment 2
-'''lab1 has three classes for three different windows
+'''lab1 has three classes for different windows
 with three options to plot data for world population'''
 
 import tkinter as tk
 import matplotlib
-
 matplotlib.use('TkAgg')  # tell matplotlib to work with Tkinter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # Canvas widget
-import tkinter.messagebox as tkmb
+import tkinter.messagebox as tkmb #open error message if no file exception
 import matplotlib.pyplot as plt  # normal import of pyplot to plot
 from population import Population
 
@@ -16,7 +15,7 @@ from population import Population
 class MainWin(tk.Tk):
     def __init__(self, fname=None):
         super().__init__()
-        self.fname = fname
+        self.fname = fname ### three files??? a list
 
         self.geometry("400x100")
         self.title("Population")
@@ -38,17 +37,19 @@ class MainWin(tk.Tk):
 
     def callback_fct(self):
         '''open an error window for wrong file'''
-        error_str = "[Errno 1]: No such file or directory:"+self.fname
+        error_str = "[Errno 1]: No such file or directory: "+self.fname
         if tkmb.showerror("Error", error_str, parent=self):
             self.destroy()
 
     def butnew(self, text, number, _class):
-        '''creates a new button and sets a proper command to it'''
+        '''creates a new button and sets a proper command to it based on a number values passed here'''
         tk.Button(self.frame, text=text, command=lambda: self.new_window(number, _class)).grid(row=1,
                                                                                                column=int(number))
 
     def new_window(self, idx, _class):
-        '''method to open a new window'''
+        '''method to open a new window,
+        if it is a dialog window, waits for it to be closed,
+         then opens another one after getting indexes from it'''
         dialogWin = _class(idx, self.data)
         self.wait_window(dialogWin)
         if idx == "3" and len(dialogWin.get_idx()) != 0:
@@ -59,7 +60,7 @@ class PlotWin(tk.Toplevel):
     def __init__(self, idx, data):
         tk.Toplevel.__init__(self)
         self.data = data
-        fig = plt.figure(figsize=(6, 6))
+        fig = plt.figure(figsize=(7, 7))
         fig.add_subplot(111)
 
         if idx == "1":
@@ -108,7 +109,7 @@ class DialogWin(tk.Toplevel):
 
     def butnew(self, text, _class):
         '''new OK button to plot the picked values'''
-        tk.Button(self, text=text, command=lambda: [self.close_window()]).pack()
+        tk.Button(self, text=text, command=lambda: self.close_window()).pack()
 
     def get_idx(self):
         '''getter for list of picked countries'''
