@@ -33,11 +33,18 @@ class MainWin(tk.Tk):
         except Exception as e:
             self.error_fct(str(e))
 
+    def close_window(self):
+        '''closes the window'''
+        self.destroy()
+
+
+
     def error_fct(self, fname):
         '''open an error window for the wrong file'''
         error_str = "[Errno 1]: No such file or directory: "+fname
         if tkmb.showerror("Error", error_str, parent=self):
             self.destroy()
+            #raise SystemExit('File Error. Exited the program')
 
     def butnew(self, text, number, _class):
         '''creates a new button and sets a proper command to it based on a number values passed here'''
@@ -77,9 +84,6 @@ class PlotWin(tk.Toplevel):
         canvas.get_tk_widget().grid()
         canvas.draw()
 
-    def close_window(self):
-        '''closes the window'''
-        self.destroy()
 
 
 class DialogWin(tk.Toplevel):
@@ -122,7 +126,6 @@ class DialogWin(tk.Toplevel):
     def close_window(self):
         '''closes the window'''
         self.destroy()
-
 
 # driver
 MainWin().mainloop()
