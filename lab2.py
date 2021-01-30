@@ -63,6 +63,7 @@ class PlotWin(tk.Toplevel):
         fig = plt.figure(figsize=(7, 7))
         fig.add_subplot(111)
 
+        ### maybe use switch stmnt?
         if idx == "1":
             self.title("Plot trends for regions")
             self.data.plot_regionTrend()
@@ -126,3 +127,11 @@ MainWin().mainloop()
 
 #test error window
 #MainWin("somefilename.csv").mainloop()
+
+
+'''EC
+East Asia and South Asia have the highest population growth. 
+This is because India and China are in those regions and they have two
+of the largest populations. 
+
+'''

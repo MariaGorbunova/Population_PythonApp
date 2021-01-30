@@ -1,6 +1,6 @@
 # Maria Gorbunova
 # Assignment 2
-'''countries has Countries class with all the backend of the program.
+'''population has Population class with all the backend of the program.
 It has data for population and it plots the requested graphs'''
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,11 +51,9 @@ class Population:
     def find_largest(self):
         '''returns idices of the top 10 largest populations'''
 
-        ### is there a way to reverse it better? :-10?
-
-        large_idx = self.population[:, -1].argsort()[::-1][:10]
-        large_idx = large_idx[::-1]  # reversing the order
-
+        # not to myself: is there a way to reverse it better?
+        large_idx = (self.population[:, -1].argsort()[::-1][:10])[::-1]
+        #large_idx = large_idx[::-1]  # reversing the order
 
         if DEBUG:
             for i in self.largest_indices:
@@ -75,15 +73,15 @@ class Population:
         '''plotting population growth trend for selected countries'''
         if DEBUG:
             print("plot trend")
-        plt.plot(self.years, self.median, "--r", label="Median")
+        plt.plot(self.years, self.median/1e6, "--r", label="Median")
         for i in idxs:
-            plt.plot(self.years, self.population[i], label=self.countries[i][0]) ### fix y and x ticks
+            plt.plot(self.years, self.population[i]/1e6, label=self.countries[i][0])
         plt.legend(loc="best")
         plt.title("Population for selected countries")
         plt.ylabel("population, mln")
-        plt.xticks(self.years, rotation=90)
-
-        # plt.show()
+        plt.xticks(self.years[::5], rotation=40)
+        if DEBUG:
+            plt.show()
 
     '''This method was modified with the assistance of my classmate Ben.'''
 
@@ -95,14 +93,14 @@ class Population:
         sorted_regions = sorted(set(self.data[:, 1]))
         for region in sorted_regions:
             region_arr = np.sum(self.population[self.data[:, 1] == region], 0)
-            plt.plot(self.years, region_arr, label=region) ### fix y and x ticks
+            plt.plot(self.years, region_arr/1e6, label=region)
 
         plt.title("Total population for each region")
         plt.legend(loc="best")
         plt.ylabel("population, mln")
-        plt.xticks(self.years, rotation=90)
-
-        # plt.show()
+        plt.xticks(self.years[::5], rotation=45)
+        if DEBUG:
+            plt.show()
         return sorted_regions
 
     @print_return
@@ -113,14 +111,14 @@ class Population:
 
         ### using comprehension on two lists??? Can improve this?
         country_name = [self.countries[i, 0] for i in self.largest_indices]
-        country_pop = [self.population[i, -1] for i in self.largest_indices]
+        country_pop = [self.population[i, -1]/1e6 for i in self.largest_indices]
 
-        plt.bar(country_name, country_pop, edgecolor='blue') ### fix y and x ticks
+        plt.bar(country_name, country_pop, edgecolor='blue')
         plt.title("Top 10 in 2019")
         plt.ylabel("population, mln")
-        plt.xticks(country_name, rotation=45)
-
-        # plt.show()
+        plt.xticks(country_name, rotation=30)
+        if DEBUG:
+            plt.show()
         return country_name
 
 
