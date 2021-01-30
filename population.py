@@ -23,8 +23,8 @@ def print_return(foo):
 
 class Population:
     def __init__(self, years=YEARS_FILE, countries=COUNTRIES_FILE, population=POPULATION_FILE):
-        # getting years from file
         try:
+            # getting years from file
             self.years = np.genfromtxt(years, delimiter=',', dtype=int)
             if DEBUG:
                 print(self.years)
@@ -53,13 +53,12 @@ class Population:
 
     def find_largest(self):
         '''returns idices of the top 10 largest populations'''
-
         # not to myself: is there a way to reverse it better?
         large_idx = (self.population[:, -1].argsort()[::-1][:10])[::-1]
         #large_idx = large_idx[::-1]  # reversing the order
 
         if DEBUG:
-            for i in self.largest_indices:
+            for i in large_idx:
                 print(f"{self.countries[i]} population: {self.population[i, -1]:,}")
         return large_idx
 
@@ -124,9 +123,9 @@ class Population:
         return country_name
 
 
-'''
-#test drive
-c = Population()
-c.plot_trendCountries([6, 14, 100, 66, 34])
-c.plot_growth()
-c.plot_regionTrend()'''
+if DEBUG:
+    #test drive
+    c = Population()
+    c.plot_trendCountries([6, 14, 100, 66, 34])
+    c.plot_growth()
+    c.plot_regionTrend()

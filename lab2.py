@@ -39,13 +39,14 @@ class MainWin(tk.Tk):
         self.destroy()
         raise SystemExit("Terminated the program")
 
-    def error_fct(self, fname):
+    def error_fct(self, errmessage):
         '''open an error window for the wrong file'''
-        error_str = "[Errno 1]: No such file or directory: " + fname
+        error_str = "[Errno 1]: " + errmessage
         if tkmb.showerror("Error", error_str, parent=self):
             self.destroy()
-            #decided to not do it since the program closes and stops automatically
-            # self.exit_fct
+            # decided to not do it since the program closes and stops automatically
+            # self.exit_fct()
+            # OR
             # raise SystemExit('Exited the program')
 
     def butnew(self, text, number, _class):
@@ -59,7 +60,7 @@ class MainWin(tk.Tk):
          then opens another one after getting indexes from it'''
         dialogWin = _class(self, idx, self.data)
         self.wait_window(dialogWin)
-        if idx == "3" and len(dialogWin.get_idx()) != 0:
+        if idx == "3" and dialogWin.boolPlot():
             self.new_window(dialogWin.get_idx(), PlotWin)
 
 
@@ -73,7 +74,7 @@ class PlotWin(tk.Toplevel):
         fig = plt.figure(figsize=(7, 7))
         fig.add_subplot(111)
 
-        ### maybe use switch stmt?
+        #Note to myself: maybe use switch stmt?
         if idx == "1":
             self.title("Plot trends for regions")
             self.data.plot_regionTrend()
@@ -111,6 +112,7 @@ class DialogWin(tk.Toplevel):
         self.listbox.pack()
 
         self.idxs = []
+        self.shouldPlot = False
         self.listbox.bind('<ButtonRelease-1>', self.on_click_listbox)
         self.butnew("Ok")
 
@@ -122,12 +124,17 @@ class DialogWin(tk.Toplevel):
         '''new OK button to plot the picked values'''
         tk.Button(self, text=text, command=lambda: self.close_window()).pack()
 
+    def boolPlot(self):
+        '''getter for the plotting bool value'''
+        return self.shouldPlot
+
     def get_idx(self):
         '''getter for list of picked countries'''
         return self.idxs
 
     def close_window(self):
-        '''closes the window'''
+        '''closes the window and sets the bool so it allows to create the plot window'''
+        self.shouldPlot = True
         self.destroy()
 
 
@@ -138,8 +145,13 @@ MainWin().mainloop()
 # MainWin(years = "somefilename.csv", countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
 # MainWin(years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
 # MainWin(years = 'years.csv', population = 'population.csv').mainloop()
+# MainWin(  "somefilename2.csv", years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
 
-# MainWin(years = 'years.csv', countries = 'population.csv').mainloop() #this might work but will give weird values
+#this line will give type error: three positional args were given, 1 expected
+#MainWin( 'years.csv',  "somefilename1.csv",  population ="somefilename2.csv").mainloop()
+
+# this will work but will give weird data
+#MainWin(years = 'years.csv', countries = 'population.csv').mainloop() #this might work but will give weird values
 
 '''EC
 East Asia and South Asia have the highest population growth. 
