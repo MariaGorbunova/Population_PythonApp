@@ -15,7 +15,7 @@ from population import Population
 class MainWin(tk.Tk):
     def __init__(self, fname=None):
         super().__init__()
-        self.fname = fname ### three files??? a list
+        self.fname = fname
 
         self.geometry("400x100")
         self.title("Population")
@@ -32,8 +32,10 @@ class MainWin(tk.Tk):
             self.butnew("Top Ten", "2", PlotWin)
             self.butnew("By Countries", "3", DialogWin)
             self.frame.pack()
-        except IOError:
-            self.callback_fct()
+        except FileNotFoundError:
+            print("Error opening file", self.fname)
+        except AttributeError:
+            print(self.fname, "does not have the proper data")
 
     def callback_fct(self):
         '''open an error window for wrong file'''
@@ -50,20 +52,21 @@ class MainWin(tk.Tk):
         '''method to open a new window,
         if it is a dialog window, waits for it to be closed,
          then opens another one after getting indexes from it'''
-        dialogWin = _class(idx, self.data)
+        dialogWin = _class(self, idx, self.data)
         self.wait_window(dialogWin)
         if idx == "3" and len(dialogWin.get_idx()) != 0:
             self.new_window(dialogWin.get_idx(), PlotWin)
 
 
 class PlotWin(tk.Toplevel):
-    def __init__(self, idx, data):
-        tk.Toplevel.__init__(self)
+    def __init__(self, master, idx, data):
+        #tk.Toplevel.__init__(self)
+        super().__init__(master)
         self.data = data
         fig = plt.figure(figsize=(7, 7))
         fig.add_subplot(111)
 
-        ### maybe use switch stmnt?
+        ### maybe use switch stmt?
         if idx == "1":
             self.title("Plot trends for regions")
             self.data.plot_regionTrend()
@@ -84,14 +87,16 @@ class PlotWin(tk.Toplevel):
 
 
 class DialogWin(tk.Toplevel):
-    def __init__(self, number, data):
-        tk.Toplevel.__init__(self)
+    def __init__(self, master, number, data):
+        super().__init__(master)
+        #tk.Toplevel.__init__(self)
         self.data = data
         self.geometry("300x200")
         self.grab_set()
         self.focus_set()
         self.title("Choose countries")
 
+        #creating the scrollbar and listbox here
         self.scrollbar = tk.Scrollbar(self)
         self.scrollbar.pack(side='right', fill='y')
         self.listbox = tk.Listbox(self, height=10, width=30, selectmode="multiple")
@@ -126,7 +131,7 @@ MainWin().mainloop()
 
 
 #test error window
-#MainWin("somefilename.csv").mainloop()
+#MainWin("somefilename.csv", "somefilename.csv", "somefilename.csv").mainloop()
 
 
 '''EC

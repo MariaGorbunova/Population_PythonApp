@@ -22,20 +22,22 @@ def print_return(foo):
 
 
 class Population:
-    ### how to deal with three default files???
     def __init__(self, years=YEARS_FILE, countries=COUNTRIES_FILE, population=POPULATION_FILE):
         # getting years from file
-        self.years = np.genfromtxt(years, delimiter=',', dtype=int)
-        if DEBUG:
-            print(self.years)
-        # getting countries from file
-        self.countries = np.genfromtxt(countries, delimiter=',', dtype=str)
-        if DEBUG:
-            print(self.countries)
-        # getting population data (2d array countries\years) from file
-        self.population = np.loadtxt(population, delimiter=',', dtype=np.int64)
-        if DEBUG:
-            print(self.population.shape)
+        try:
+            self.years = np.genfromtxt(years, delimiter=',', dtype=int)
+            if DEBUG:
+                print(self.years)
+            # getting countries from file
+            self.countries = np.genfromtxt(countries, delimiter=',', dtype=str)
+            if DEBUG:
+                print(self.countries)
+            # getting population data (2d array countries\years) from file
+            self.population = np.loadtxt(population, delimiter=',', dtype=np.int64)
+            if DEBUG:
+                print(self.population.shape)
+        except FileNotFoundError:
+            raise IOError
         # concatinating country names and populations in one numpy 2d array
         self.data = np.concatenate((self.countries[:, [0, 2]], self.population), axis=1)
         if DEBUG:
@@ -84,7 +86,6 @@ class Population:
             plt.show()
 
     '''This method was modified with the assistance of my classmate Ben.'''
-
     @print_return
     def plot_regionTrend(self):
         '''plot_regionTrend creates a plot with regions' population data'''
