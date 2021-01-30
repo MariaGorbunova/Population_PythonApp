@@ -13,10 +13,8 @@ from population import Population
 
 
 class MainWin(tk.Tk):
-    def __init__(self, fname=None):
+    def __init__(self, **kwargs):
         super().__init__()
-        self.fname = fname
-
         self.geometry("400x100")
         self.title("Population")
         self.frame = tk.Frame(self)
@@ -25,21 +23,19 @@ class MainWin(tk.Tk):
 
         try:
             try:
-                self.data = Population(self.fname)
+                self.data = Population(**kwargs)
             except TypeError:
                 self.data = Population()
             self.butnew("By Regions", "1", PlotWin)
             self.butnew("Top Ten", "2", PlotWin)
             self.butnew("By Countries", "3", DialogWin)
             self.frame.pack()
-        except FileNotFoundError:
-            print("Error opening file", self.fname)
-        except AttributeError:
-            print(self.fname, "does not have the proper data")
+        except Exception as e:
+            self.error_fct(str(e))
 
-    def callback_fct(self):
-        '''open an error window for wrong file'''
-        error_str = "[Errno 1]: No such file or directory: "+self.fname
+    def error_fct(self, fname):
+        '''open an error window for the wrong file'''
+        error_str = "[Errno 1]: No such file or directory: "+fname
         if tkmb.showerror("Error", error_str, parent=self):
             self.destroy()
 
@@ -47,7 +43,6 @@ class MainWin(tk.Tk):
         '''creates a new button and sets a proper command to it based on a number values passed here'''
         tk.Button(self.frame, text=text, command=lambda: self.new_window(number, _class)).grid(row=1,
                                                                                                column=int(number))
-
     def new_window(self, idx, _class):
         '''method to open a new window,
         if it is a dialog window, waits for it to be closed,
@@ -60,8 +55,9 @@ class MainWin(tk.Tk):
 
 class PlotWin(tk.Toplevel):
     def __init__(self, master, idx, data):
-        #tk.Toplevel.__init__(self)
         super().__init__(master)
+        # old version. Changed it so it is like in class notes
+        #tk.Toplevel.__init__(self)
         self.data = data
         fig = plt.figure(figsize=(7, 7))
         fig.add_subplot(111)
@@ -89,6 +85,8 @@ class PlotWin(tk.Toplevel):
 class DialogWin(tk.Toplevel):
     def __init__(self, master, number, data):
         super().__init__(master)
+
+        # old version. Changed it so it is like in class notes
         #tk.Toplevel.__init__(self)
         self.data = data
         self.geometry("300x200")
@@ -130,9 +128,12 @@ class DialogWin(tk.Toplevel):
 MainWin().mainloop()
 
 
-#test error window
-#MainWin("somefilename.csv", "somefilename.csv", "somefilename.csv").mainloop()
+#TESTING ERROR WINDOW with various filenames
+#MainWin(years = "somefilename.csv", countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
+#MainWin(years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
+#MainWin(years = 'years.csv', population = 'population.csv').mainloop()
 
+#MainWin(years = 'years.csv', countries = 'population.csv').mainloop() #this might work but will give weird values
 
 '''EC
 East Asia and South Asia have the highest population growth. 

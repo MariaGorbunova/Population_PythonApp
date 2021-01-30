@@ -36,8 +36,9 @@ class Population:
             self.population = np.loadtxt(population, delimiter=',', dtype=np.int64)
             if DEBUG:
                 print(self.population.shape)
-        except FileNotFoundError:
-            raise IOError
+        except (IOError, OSError) as e:
+            raise Exception(str(e))
+
         # concatinating country names and populations in one numpy 2d array
         self.data = np.concatenate((self.countries[:, [0, 2]], self.population), axis=1)
         if DEBUG:
