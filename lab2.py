@@ -5,9 +5,10 @@ with three options to plot data for world population'''
 
 import tkinter as tk
 import matplotlib
+
 matplotlib.use('TkAgg')  # tell matplotlib to work with Tkinter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # Canvas widget
-import tkinter.messagebox as tkmb #open error message if no file exception
+import tkinter.messagebox as tkmb  # open error message if no file exception
 import matplotlib.pyplot as plt  # normal import of pyplot to plot
 from population import Population
 
@@ -30,26 +31,28 @@ class MainWin(tk.Tk):
             self.butnew("Top Ten", "2", PlotWin)
             self.butnew("By Countries", "3", DialogWin)
             self.frame.pack()
+            self.protocol("WM_DELETE_WINDOW", self.exit_fct)
         except Exception as e:
             self.error_fct(str(e))
 
-    def close_window(self):
-        '''closes the window'''
+    def exit_fct(self):
         self.destroy()
-
-
+        raise SystemExit("Terminated the program")
 
     def error_fct(self, fname):
         '''open an error window for the wrong file'''
-        error_str = "[Errno 1]: No such file or directory: "+fname
+        error_str = "[Errno 1]: No such file or directory: " + fname
         if tkmb.showerror("Error", error_str, parent=self):
             self.destroy()
-            #raise SystemExit('File Error. Exited the program')
+            #decided to not do it since the program closes and stops automatically
+            # self.exit_fct
+            # raise SystemExit('Exited the program')
 
     def butnew(self, text, number, _class):
         '''creates a new button and sets a proper command to it based on a number values passed here'''
         tk.Button(self.frame, text=text, command=lambda: self.new_window(number, _class)).grid(row=1,
                                                                                                column=int(number))
+
     def new_window(self, idx, _class):
         '''method to open a new window,
         if it is a dialog window, waits for it to be closed,
@@ -63,8 +66,9 @@ class MainWin(tk.Tk):
 class PlotWin(tk.Toplevel):
     def __init__(self, master, idx, data):
         super().__init__(master)
+
         # old version. Changed it so it is like in class notes
-        #tk.Toplevel.__init__(self)
+        # tk.Toplevel.__init__(self)
         self.data = data
         fig = plt.figure(figsize=(7, 7))
         fig.add_subplot(111)
@@ -85,20 +89,19 @@ class PlotWin(tk.Toplevel):
         canvas.draw()
 
 
-
 class DialogWin(tk.Toplevel):
     def __init__(self, master, number, data):
         super().__init__(master)
 
         # old version. Changed it so it is like in class notes
-        #tk.Toplevel.__init__(self)
+        # tk.Toplevel.__init__(self)
         self.data = data
         self.geometry("300x200")
         self.grab_set()
         self.focus_set()
         self.title("Choose countries")
 
-        #creating the scrollbar and listbox here
+        # creating the scrollbar and listbox here
         self.scrollbar = tk.Scrollbar(self)
         self.scrollbar.pack(side='right', fill='y')
         self.listbox = tk.Listbox(self, height=10, width=30, selectmode="multiple")
@@ -109,13 +112,13 @@ class DialogWin(tk.Toplevel):
 
         self.idxs = []
         self.listbox.bind('<ButtonRelease-1>', self.on_click_listbox)
-        self.butnew("Ok", PlotWin)
+        self.butnew("Ok")
 
     def on_click_listbox(self, event):
         '''assigns ids for countries clicked by user'''
         self.idxs = list(self.listbox.curselection())
 
-    def butnew(self, text, _class):
+    def butnew(self, text):
         '''new OK button to plot the picked values'''
         tk.Button(self, text=text, command=lambda: self.close_window()).pack()
 
@@ -127,16 +130,16 @@ class DialogWin(tk.Toplevel):
         '''closes the window'''
         self.destroy()
 
+
 # driver
 MainWin().mainloop()
 
+# TESTING ERROR WINDOW with various filenames
+# MainWin(years = "somefilename.csv", countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
+# MainWin(years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
+# MainWin(years = 'years.csv', population = 'population.csv').mainloop()
 
-#TESTING ERROR WINDOW with various filenames
-#MainWin(years = "somefilename.csv", countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
-#MainWin(years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
-#MainWin(years = 'years.csv', population = 'population.csv').mainloop()
-
-#MainWin(years = 'years.csv', countries = 'population.csv').mainloop() #this might work but will give weird values
+# MainWin(years = 'years.csv', countries = 'population.csv').mainloop() #this might work but will give weird values
 
 '''EC
 East Asia and South Asia have the highest population growth. 
