@@ -23,24 +23,25 @@ def print_return(foo):
 
 class Population:
     def __init__(self, years=YEARS_FILE, countries=COUNTRIES_FILE, population=POPULATION_FILE):
-        try:
-            # getting years from file
-            self.years = np.genfromtxt(years, delimiter=',', dtype=int)
-            if DEBUG:
-                print(self.years)
-            # getting countries from file
-            self.countries = np.genfromtxt(countries, delimiter=',', dtype=str)
-            if DEBUG:
-                print(self.countries)
-            # getting population data (2d array countries\years) from file
-            self.population = np.loadtxt(population, delimiter=',', dtype=np.int64)
-            if DEBUG:
-                print(self.population.shape)
-        except (IOError, OSError) as e:
-            raise Exception(str(e))
+        # getting years from file
+        self.years = np.genfromtxt(years, delimiter=',', dtype=int)
+        if DEBUG:
+            print(self.years)
+        # getting countries from file
+        self.countries = np.genfromtxt(countries, delimiter=',', dtype=str)
+        if DEBUG:
+            print(self.countries)
+        # getting population data (2d array countries\years) from file
+        self.population = np.loadtxt(population, delimiter=',', dtype=np.int64)
+        if DEBUG:
+            print(self.population.shape)
 
         # concatinating country names and populations in one numpy 2d array
-        self.data = np.concatenate((self.countries[:, [0, 2]], self.population), axis=1)
+        try:
+            self.data = np.concatenate((self.countries[:, [0, 2]], self.population), axis=1)
+        except ValueError:
+            raise Exception("The data from files was not up to the program standard.")
+
         if DEBUG:
             print(self.data)
         # creating class variables: largest 10 countries and median
@@ -93,6 +94,7 @@ class Population:
             print("Plotting region trend")
         sorted_regions = sorted(set(self.data[:, 1]))
         for region in sorted_regions:
+            # decided to have this data calculated here and not in init
             region_arr = np.sum(self.population[self.data[:, 1] == region], 0)
             plt.plot(self.years, region_arr/1e6, label=region)
 
@@ -110,17 +112,20 @@ class Population:
         if DEBUG:
             print("plot growth for top 10")
 
-        ### using comprehension on two lists??? Can improve this?
-        country_name = [self.countries[i, 0] for i in self.largest_indices]
+        # using comprehension for creating country_pop list??? Can improve this?
+        # cant adjust the values to print it nicely for yticks
+        # this gives an error:
+        # country_pop = self.data[self.largest_indices, -1] /1e6
+        # i think its ok since its just 10 values
         country_pop = [self.population[i, -1]/1e6 for i in self.largest_indices]
 
-        plt.bar(country_name, country_pop, edgecolor='blue')
+        plt.bar(self.data[self.largest_indices, 0], country_pop, edgecolor='blue')
         plt.title("Top 10 in 2019")
         plt.ylabel("population, mln")
-        plt.xticks(country_name, rotation=30)
+        plt.xticks(self.data[self.largest_indices, 0], rotation=30)
         if DEBUG:
             plt.show()
-        return country_name
+        return self.data[self.largest_indices, 0]
 
 
 if DEBUG:
@@ -129,3 +134,5 @@ if DEBUG:
     c.plot_trendCountries([6, 14, 100, 66, 34])
     c.plot_growth()
     c.plot_regionTrend()
+
+

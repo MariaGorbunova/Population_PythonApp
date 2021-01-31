@@ -3,6 +3,12 @@
 '''lab1 has three classes for different windows
 with three options to plot data for world population'''
 
+'''EC
+East Asia and South Asia have the highest population growth. 
+This is because India and China are in those regions and they have two
+of the largest populations in the world and the largest population growth.
+'''
+
 import tkinter as tk
 import matplotlib
 
@@ -11,7 +17,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # Canvas widget
 import tkinter.messagebox as tkmb  # open error message if no file exception
 import matplotlib.pyplot as plt  # normal import of pyplot to plot
 from population import Population
-
 
 class MainWin(tk.Tk):
     def __init__(self, **kwargs):
@@ -36,7 +41,15 @@ class MainWin(tk.Tk):
             self.error_fct(str(e))
 
     def exit_fct(self):
+        ''' Found this weird behavior when the program has several
+        windows open and you close the main one, the program doesnt stop running,
+        although closes all windows as it was asked in the assignment.
+        Decided to make it so the program ends too'''
         self.destroy()
+        # Professor, I forgot what you said about the pythonic way of writing the program,
+        # and I looked through the Zoom recordings and this part wasn't recorded!
+        # So I have the two ways how I could end the program and decided to go with systemExit.
+        # also could use quit()
         raise SystemExit("Terminated the program")
 
     def error_fct(self, errmessage):
@@ -134,7 +147,8 @@ class DialogWin(tk.Toplevel):
 
     def close_window(self):
         '''closes the window and sets the bool so it allows to create the plot window'''
-        self.shouldPlot = True
+        if len(self.idxs) != 0:
+            self.shouldPlot = True
         self.destroy()
 
 
@@ -142,7 +156,7 @@ class DialogWin(tk.Toplevel):
 MainWin().mainloop()
 
 # TESTING ERROR WINDOW with various filenames
-# MainWin(years = "somefilename.csv", countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
+#MainWin(years = "somefilename.csv", countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
 # MainWin(years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
 # MainWin(years = 'years.csv', population = 'population.csv').mainloop()
 # MainWin(  "somefilename2.csv", years = 'years.csv', countries = "somefilename1.csv",  population ="somefilename2.csv").mainloop()
@@ -153,9 +167,3 @@ MainWin().mainloop()
 # this will work but will give weird data
 #MainWin(years = 'years.csv', countries = 'population.csv').mainloop() #this might work but will give weird values
 
-'''EC
-East Asia and South Asia have the highest population growth. 
-This is because India and China are in those regions and they have two
-of the largest populations. 
-
-'''
