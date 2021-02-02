@@ -17,7 +17,7 @@ def print_return(foo):
         result = foo(*args, **kwargs)
         for item in result:
             print(item)
-        # return result
+        return result
     return wrapper
 
 
@@ -102,6 +102,7 @@ class Population:
         plt.legend(loc="best")
         plt.ylabel("population, mln")
         plt.xticks(self.years[::5], rotation=45)
+        plt.tight_layout()
         if DEBUG:
             plt.show()
         return sorted_regions

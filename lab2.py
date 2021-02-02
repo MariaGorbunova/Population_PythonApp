@@ -50,7 +50,8 @@ class MainWin(tk.Tk):
         # and I looked through the Zoom recordings and this part wasn't recorded!
         # So I have the two ways how I could end the program and decided to go with systemExit.
         # also could use quit()
-        raise SystemExit("Terminated the program")
+        # raise SystemExit("Terminated the program")
+        self.quit()
 
     def error_fct(self, errmessage):
         '''open an error window for the wrong file'''
@@ -71,10 +72,10 @@ class MainWin(tk.Tk):
         '''method to open a new window,
         if it is a dialog window, waits for it to be closed,
          then opens another one after getting indexes from it'''
-        dialogWin = _class(self, idx, self.data)
-        self.wait_window(dialogWin)
-        if idx == "3" and dialogWin.boolPlot():
-            self.new_window(dialogWin.get_idx(), PlotWin)
+        newWin = _class(self, idx, self.data)
+        self.wait_window(newWin)
+        if idx == "3" and newWin.boolPlot():
+            self.new_window(newWin.get_idx(), PlotWin)
 
 
 class PlotWin(tk.Toplevel):
